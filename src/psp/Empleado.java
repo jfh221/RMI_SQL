@@ -16,7 +16,7 @@ public class Empleado implements Serializable {
     private int id;
     private String nombre;
     private String apellido;
-    
+
     /**
      * Constructor of the class Empleado with the fields: nombre and apellido
      * @param nombre String name
@@ -62,29 +62,29 @@ public class Empleado implements Serializable {
     public String getApellido() {
         return apellido;
     }
-    
+
     /**
      * Set the name of the Employee
      * @param nombre - String of the Employee
      */
-	public void setNombre(String nombre) {
-		this.nombre = nombre;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	/**
-	 * Set the surname of the Employee
-	 * @param apellido - String of the Employee
-	 */
-	public void setApellido(String apellido) {
-		this.apellido = apellido;
-	}
+    /**
+     * Set the surname of the Employee
+     * @param apellido - String of the Employee
+     */
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
     /**
      * Return a String with all fields of an Employee
      */
-	@Override
-	public String toString() {
-		return id+", "+nombre+", "+apellido;
-	}
+    @Override
+    public String toString() {
+        return id+", "+nombre+", "+apellido;
+    }
 
 }

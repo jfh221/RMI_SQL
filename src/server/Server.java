@@ -1,15 +1,18 @@
 package server;
 
-import psp.Empleado;
-import psp.EmpleadoInterface;
-
-import javax.swing.*;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.List;
+
+import javax.swing.JOptionPane;
+
+import com.formdev.flatlaf.FlatDarkLaf;
+
+import psp.Empleado;
+import psp.EmpleadoInterface;
 
 /**
  * Server class implements the EmployeeInterface and provides methods to
@@ -36,23 +39,37 @@ public class Server implements EmpleadoInterface {
 	/**
 	 * Main method which creates and exports a remote object,
 	 * binds the remote object's stub in the registry and
-	 * starts the server
+	 * starts the server. It will first ask the port in which the server should be opened
 	 *
 	 * @param args - Command line arguments
 	 */
 	public static void main(String[] args) {
+		FlatDarkLaf.setup();
 		boolean correctPort = false;
 		while (!correctPort) {
 			String portS = JOptionPane.showInputDialog("Indica el puerto al que desea conectarse");
 			if (portS!=null) {
 				if (portS.matches("[0-9]+")) {
-					port = Integer.parseInt(portS);
-					correctPort = true;
+					int tmp;
+					// Number is too high or to low (10000000000000000000)
+					try {
+						tmp = Integer.parseInt(portS);
+					} catch (NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(null, "Invalid port number!");
+						return;
+					}
+					if (tmp>0 && tmp<65536) {
+						port = tmp;
+						correctPort = true;
+					} else {
+						JOptionPane.showMessageDialog(null, "Puerto introducido esta fuera del rango permitido: 0 a 65536");
+					}
 				} else {
 					JOptionPane.showMessageDialog(null, "Puerto introducido no es un numero entero");
 				}
 			} else {
-				JOptionPane.showMessageDialog(null, "No se ha introducido ningun puerto");
+				JOptionPane.showMessageDialog(null, "Ningun puerto introducido.\nCerrnado programa...");
+				System.exit(0);
 			}
 		}
 		try {
@@ -64,7 +81,7 @@ public class Server implements EmpleadoInterface {
 			registry.bind(EmpleadoInterface.class.getSimpleName(), stub);
 			JOptionPane.showMessageDialog(null, "Servidor creado correctamente con el puerto: "+port);
 		} catch (RemoteException | AlreadyBoundException e) {
-			JOptionPane.showMessageDialog(null, "ERROR: Port already in use");
+			JOptionPane.showMessageDialog(null, "ERROR: Port: "+port+" already in use");
 			System.exit(-1);
 		}
 	}
@@ -124,5 +141,8 @@ public class Server implements EmpleadoInterface {
 	public Empleado readEmp(int empId) throws RemoteException {
 		return empDAO.read(empId);
 	}
+
+
+
 
 }

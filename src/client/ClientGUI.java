@@ -43,18 +43,34 @@ public class ClientGUI extends JFrame {
 	EmpleadoInterface stub;
 
 	/**
-	 * Launch the application.
+	 * Launch the application. And ask the client for the port to use
 	 */
 	public static void main(String[] args) {
+		FlatDarkLaf.setup();
 		EventQueue.invokeLater(() -> {
 			try {
 				String portS = JOptionPane.showInputDialog("Indica el puerto al que desea conectarse");
 				if (portS!=null) {
 					if (portS.matches("[0-9]+")) {
-						int port = Integer.parseInt(portS);
-						ClientGUI frame = new ClientGUI(port);
-						frame.setVisible(true);
+						int port;
+						// Number is too high or to low (1000000000000000000)
+						try {
+							port = Integer.parseInt(portS);
+						} catch(NumberFormatException nfe) {
+							JOptionPane.showMessageDialog(null, "Invalid port number!");
+							return;
+						}
+						if (port>0 && port<65536) {
+							ClientGUI frame = new ClientGUI(port);
+							frame.setVisible(true);
+						} else {
+							JOptionPane.showMessageDialog(null, "Puerto introducido esta fuera del rango permitido: 0 a 65536");
+						}
+					} else {
+						JOptionPane.showMessageDialog(null, "Puerto introducido no es un numero entero");
 					}
+				} else {
+					JOptionPane.showMessageDialog(null, "Ningun puerto introducido.\nCerrnado programa...");
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -82,7 +98,7 @@ public class ClientGUI extends JFrame {
 			stub = (EmpleadoInterface) registry.lookup(EmpleadoInterface.class.getSimpleName());
 		} catch(ConnectException ce) {
 			// Server probably is not started
-			JOptionPane.showMessageDialog(null, "Server disconnected. Connection refused");
+			JOptionPane.showMessageDialog(null, "Connection refused.\nNingun servidor iniciado en el puerto introducido.\nCerrando programa...");
 			System.exit(-1);
 		} catch (RemoteException | NotBoundException e) {
 			e.printStackTrace();
@@ -97,7 +113,6 @@ public class ClientGUI extends JFrame {
 	 * And assign that when the program is closing it disconnects from the database.
 	 */
 	private void initizalize() {
-		FlatDarkLaf.setup();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 825, 540);
 		// Swing Objects
@@ -144,7 +159,11 @@ public class ClientGUI extends JFrame {
 				Empleado emp = new Empleado(textFieldNombre.getText(), textFieldApellido.getText());
 				try {
 					stub.createEmp(emp);
-				} catch (RemoteException e1) {
+				} catch (ConnectException ce) {
+					JOptionPane.showMessageDialog(null, "ERROR: Server disconnected!. \nClosing program...");
+					System.exit(-1);
+				}
+				catch (RemoteException e1) {
 					e1.printStackTrace();
 				}
 				clearTextFields();
@@ -166,7 +185,13 @@ public class ClientGUI extends JFrame {
 			if (idS!=null) {
 				if (idS.matches("[0-9]+")) {
 					if (!"".equals(textFieldNombre.getText()) || !"".equals(textFieldApellido.getText())) {
-						int id = Integer.parseInt(idS);
+						int id;
+						try {
+							id = Integer.parseInt(idS);
+						} catch (NumberFormatException nfe) {
+							JOptionPane.showMessageDialog(null, "Invalid id number!");
+							return;
+						}
 						try {
 							Empleado emp = stub.readEmp(id);
 							if (emp==null) {
@@ -180,7 +205,11 @@ public class ClientGUI extends JFrame {
 								}
 								stub.updateEmp(emp);
 							}
-						} catch (RemoteException e1) {
+						} catch (ConnectException ce) {
+							JOptionPane.showMessageDialog(null, "ERROR: Server disconnected!. \nClosing program...");
+							System.exit(-1);
+						}
+						catch (RemoteException e1) {
 							e1.printStackTrace();
 						}
 						clearTextFields();
@@ -205,10 +234,21 @@ public class ClientGUI extends JFrame {
 			String idS = JOptionPane.showInputDialog("Indica el id del empleado a eliminar");
 			if (idS!=null) {
 				if (idS.matches("[0-9]+")) {
-					int id = Integer.parseInt(idS);
+					int id;
+					try {
+						id = Integer.parseInt(idS);
+					} catch (NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(null, "Invalid id number!");
+						return;
+					}
+
 					try {
 						stub.deleteEmp(id);
-					} catch (RemoteException e1) {
+					} catch (ConnectException ce) {
+						JOptionPane.showMessageDialog(null, "ERROR: Server disconnected!. \nClosing program...");
+						System.exit(-1);
+					}
+					catch (RemoteException e1) {
 						e1.printStackTrace();
 					}
 					loadEmployees();
@@ -229,7 +269,14 @@ public class ClientGUI extends JFrame {
 			String idS = JOptionPane.showInputDialog("Indica el id del empleado a eliminar");
 			if (idS!=null) {
 				if (idS.matches("[0-9]+")) {
-					int id = Integer.parseInt(idS);
+					int id;
+					// If id number is too high or to low (100000000000000000)
+					try {
+						id = Integer.parseInt(idS);
+					} catch(NumberFormatException nfe) {
+						JOptionPane.showMessageDialog(null, "Invalid id number!");
+						return;
+					}
 					textAreaEmpleados.setText("");
 					Empleado emp;
 					try {
@@ -239,11 +286,16 @@ public class ClientGUI extends JFrame {
 						} else {
 							JOptionPane.showMessageDialog(null, "No existe un empleado con este id");
 						}
-					} catch (RemoteException e1) {
+					} catch (ConnectException ce) {
+						JOptionPane.showMessageDialog(null, "ERROR: Server disconnected!. \nClosing program...");
+						System.exit(-1);
+					}
+					catch (RemoteException e1) {
 						e1.printStackTrace();
 					}
+
 				} else {
-					JOptionPane.showMessageDialog(null, "Id introducido no es un numero entero");
+					JOptionPane.showMessageDialog(null, "Id introducido no es un numero entero positivo");
 				}
 			}
 		});
@@ -281,6 +333,9 @@ public class ClientGUI extends JFrame {
 			for (Empleado emp : empList) {
 				textAreaEmpleados.append(emp.toString() + "\n");
 			}
+		} catch (ConnectException ce) {
+			JOptionPane.showMessageDialog(null, "ERROR: Server disconnected!. \nClosing program...");
+			System.exit(-1);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

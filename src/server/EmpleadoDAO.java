@@ -4,7 +4,6 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jetbrains.annotations.NotNull;
 import psp.Empleado;
 
 /**
@@ -22,8 +21,6 @@ import psp.Empleado;
 public class EmpleadoDAO {
     private Connection conexion;
 
-    // This is only for MY MySQL, service,
-    // if you want to test the code you will probably need to change the user and password to yours
     // Our Database link
     private final String URL = "jdbc:mysql://localhost:3306/empleadosbd";
     // The user of our database
@@ -51,12 +48,12 @@ public class EmpleadoDAO {
         }
     }
 
-	/**
-	 * Creates a new employee record.
-	 * 
-	 * @param empleado the employee object to be added to the database
+    /**
+     * Creates a new employee record.
+     *
+     * @param empleado the employee object to be added to the database
      */
-    public void create(@NotNull Empleado empleado) {
+    public void create(Empleado empleado) {
         try {
             PreparedStatement ps = conexion.prepareStatement("INSERT INTO empleados (nombre, apellido) VALUES (?, ?)");
             ps.setString(1, empleado.getNombre());
@@ -68,10 +65,10 @@ public class EmpleadoDAO {
     }
 
     /**
-	 * Reads a single employee record from the database.
-	 * 
-	 * @param id the id of the employee to be retrieved from the database
-	 * @return the employee object with the specified id
+     * Reads a single employee record from the database.
+     *
+     * @param id the id of the employee to be retrieved from the database
+     * @return the employee object with the specified id
      */
     public Empleado read(int id) {
         Empleado empleado = null;
@@ -87,11 +84,11 @@ public class EmpleadoDAO {
         }
         return empleado;
     }
-    
+
     /**
-	 * Reads all employee records from the database.
-	 * 
-	 * @return a list of all employees in the database
+     * Reads all employee records from the database.
+     *
+     * @return a list of all employees in the database
      */
     public List<Empleado> read() {
         List<Empleado> empleados = new ArrayList<>();
@@ -108,11 +105,11 @@ public class EmpleadoDAO {
     }
 
     /**
-	 * Updates an existing employee record.
-	 * 
-	 * @param empleado the updated employee object to be saved to the database
+     * Updates an existing employee record.
+     *
+     * @param empleado the updated employee object to be saved to the database
      */
-    public void update(@NotNull Empleado empleado) {
+    public void update(Empleado empleado) {
         try {
             PreparedStatement ps = conexion.prepareStatement("UPDATE empleados SET nombre = ?, apellido = ? WHERE id = ?");
             ps.setString(1, empleado.getNombre());
@@ -125,9 +122,9 @@ public class EmpleadoDAO {
     }
 
     /**
-	 * Deletes an employee record.
-	 * 
-	 * @param id the id of the employee to be deleted from the database
+     * Deletes an employee record.
+     *
+     * @param id the id of the employee to be deleted from the database
      */
     public void delete(int id) {
         try {
