@@ -8,8 +8,8 @@ import java.io.Serializable;
  * Every field will have the getters and setters method except for id will
  * must not have the setter, since it's the primary key of each employee, 
  * we will not allow it to be changed.
-
- * @author Javi
+ *
+ * @author Javifh
  *
  */
 public class Empleado implements Serializable {

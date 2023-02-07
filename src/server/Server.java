@@ -27,7 +27,7 @@ public class Server implements EmpleadoInterface {
 	// empDAO attribute to store an instance of EmpleadoDAO
 	private final EmpleadoDAO empDAO;
 	// port in which the server will be opened
-	private static int port = 1099;
+	private static int port;
 
 	/**
 	 * Default constructor which initializes the empDAO attribute
@@ -75,8 +75,11 @@ public class Server implements EmpleadoInterface {
 		try {
 			// Create and export a remote object
 			Server remoteObj = new Server();
+			// Exports the remote object to make it available to receive incoming calls, using the particular supplied port.
+			// The object is exported with a server socket created using the RMISocketFactory class.
 			EmpleadoInterface stub = (EmpleadoInterface) UnicastRemoteObject.exportObject(remoteObj, 0);
 			// Bind the remote object's stub in the registry
+			// Creates and exports a Registry instance on the local host that accepts requests on the specified port.
 			Registry registry = LocateRegistry.createRegistry(port);
 			registry.bind(EmpleadoInterface.class.getSimpleName(), stub);
 			JOptionPane.showMessageDialog(null, "Servidor creado correctamente con el puerto: "+port);
@@ -141,8 +144,5 @@ public class Server implements EmpleadoInterface {
 	public Empleado readEmp(int empId) throws RemoteException {
 		return empDAO.read(empId);
 	}
-
-
-
 
 }

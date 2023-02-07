@@ -23,7 +23,7 @@ import java.util.List;
  * ClientGUI class will allow our Client to interact with our Server's database utilizing the EmpleadoInterface methods.
  * <br><br>
  * Makes use of the LocateRegistry class in Java and its <code>getRegistry()</code> method
- * to get a reference to the object registry on the remote host with port 1099.
+ * to get a reference to the object registry on the remote host with port.
  * It then uses the <code>lookup()</code> method to get a reference to a remote object
  * that implements the EmployeeInterface interface and assigns it to the variable "stub".
  * <br>
@@ -88,7 +88,7 @@ public class ClientGUI extends JFrame {
 		try {
 			/*
 			 * This code makes use of the LocateRegistry class in Java and its getRegistry method
-			 * to get a reference to the object registry on the remote host with port 1099.
+			 * to get a reference to the object registry on the remote host with port.
 			 * Then, it uses the lookup method to get a reference to a remote object that implements the EmployeeInterface interface
 			 * and assigns it to the variable "stub".
 			 * This remote object is accessed through the "stub" and can be used to invoke remote methods on the object on the remote host.
