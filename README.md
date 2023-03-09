@@ -1,6 +1,6 @@
 # RMI_SQL
 
-# Práctica de Programación de Servicios y Procesos 2022-2023
+# Práctica de Programación de Servicios y Procesos
 
 
 Este es un proyecto que tiene como objetivo la construcción de un programa para llevar a cabo la gestión de los datos de los empleados de una empresa. 
